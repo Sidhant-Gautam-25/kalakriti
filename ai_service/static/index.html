@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KalaKriti — AI Smart Cataloguing Module</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #c2593f;
+            --primary-hover: #a8472f;
+            --secondary: #d97736;
+            --accent: #e0a96d;
+            --bg: #fbf9f5;
+            --card-bg: #ffffff;
+            --text-main: #2c2523;
+            --text-muted: #6e655f;
+            --border: #e6dfd5;
+            --shadow-sm: 0 2px 8px rgba(44, 37, 35, 0.04);
+            --shadow-md: 0 6px 20px rgba(44, 37, 35, 0.08);
+            --radius-lg: 16px;
+            --radius-md: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+
+        /* Header Bar */
+        header {
+            background: linear-gradient(135deg, #2c2523 0%, #3e3330 100%);
+            color: #ffffff;
+            padding: 24px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            width: 42px;
+            height: 42px;
+            background-color: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 22px;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(194, 89, 63, 0.4);
+        }
+
+        .brand-title h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-title p {
+            font-size: 13px;
+            color: #d1c7bd;
+        }
+
+        .badge-prototype {
+            background: rgba(224, 169, 109, 0.2);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1100px;
+            margin: 32px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 28px;
+        }
+
+        @media (max-width: 880px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card-header {
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+        }
+
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Upload Area */
+        .dropzone {
+            border: 2px dashed var(--secondary);
+            background: #fffcf8;
+            border-radius: var(--radius-md);
+            padding: 32px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .dropzone:hover, .dropzone.dragover {
+            background: #fdf5eb;
+            border-color: var(--primary);
+        }
+
+        .dropzone-icon {
+            font-size: 38px;
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+
+        .dropzone-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .dropzone-subtext {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        #image-input {
+            display: none;
+        }
+
+        /* Image Preview */
+        .preview-container {
+            margin-top: 16px;
+            display: none;
+            position: relative;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Buttons */
+        .btn-submit {
+            width: 100%;
+            margin-top: 20px;
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            padding: 14px 20px;
+            border-radius: var(--radius-md);
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(194, 89, 63, 0.25);
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-submit:disabled {
+            background: #d4c8be;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 0.8s infinite linear;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Alert Banner */
+        .alert {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            display: none;
+        }
+
+        .alert-danger {
+            background-color: #fdf2f2;
+            border: 1px solid #f8b4b4;
+            color: #9b1c1c;
+        }
+
+        /* Results Display */
+        .results-container {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .placeholder-card {
+            background: #ffffff;
+            border: 1px dashed var(--border);
+            border-radius: var(--radius-lg);
+            padding: 48px 24px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .placeholder-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.6;
+        }
+
+        /* Metadata Grid */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+        }
+
+        .meta-item {
+            background: #faf8f5;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid #f0e9df;
+        }
+
+        .meta-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .meta-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .confidence-badge {
+            display: inline-block;
+            background: #e6f4ea;
+            color: #137333;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* Language Section Cards */
+        .catalog-lang-card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-top: 16px;
+        }
+
+        .catalog-lang-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .lang-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .catalog-prod-title {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .catalog-desc {
+            font-size: 14px;
+            color: #4a423d;
+            margin-bottom: 14px;
+            white-space: pre-line;
+        }
+
+        /* Tags */
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .tag-pill {
+            background: #f3efe9;
+            color: #5c524a;
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="brand">
+                <div class="brand-logo">K</div>
+                <div class="brand-title">
+                    <h1>KalaKriti AI</h1>
+                    <p>Smart Cataloguing for Marginalized Artisans</p>
+                </div>
+            </div>
+            <div class="badge-prototype">University Prototype</div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Left Panel: Input & Control -->
+        <section class="card">
+            <div class="card-header">
+                <h2 class="card-title">📷 Upload Product</h2>
+            </div>
+
+            <div class="dropzone" id="dropzone">
+                <div class="dropzone-icon">🏺</div>
+                <div class="dropzone-text">Click or drag image here</div>
+                <div class="dropzone-subtext">Supports JPEG, PNG, WEBP</div>
+                <input type="file" id="image-input" accept="image/jpeg,image/png,image/webp">
+            </div>
+
+            <div class="preview-container" id="preview-container">
+                <img id="image-preview" class="preview-image" alt="Artisan Product Preview">
+            </div>
+
+            <button class="btn-submit" id="generate-btn" disabled>
+                <span class="spinner" id="btn-spinner"></span>
+                <span id="btn-text">Generate Smart Catalogue</span>
+            </button>
+
+            <div class="alert alert-danger" id="alert-error"></div>
+        </section>
+
+        <!-- Right Panel: Output Dashboard -->
+        <section class="results-container">
+            <!-- Placeholder before generation -->
+            <div class="placeholder-card" id="placeholder-state">
+                <div class="placeholder-icon">✨</div>
+                <h3>Catalogue Output Preview</h3>
+                <p>Upload an artisan product image and click <strong>Generate Smart Catalogue</strong> to view AI-extracted product attributes and multilingual e-commerce listings.</p>
+            </div>
+
+            <!-- Active Results Container -->
+            <div id="results-state" style="display: none;">
+                
+                <!-- Card 1: Vision AI Extracted Attributes -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">🔍 Extracted Product Attributes</h2>
+                    </div>
+
+                    <div class="meta-grid">
+                        <div class="meta-item">
+                            <div class="meta-label">Product Name</div>
+                            <div class="meta-value" id="res-product-name">-</div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-label">Category</div>
+                            <div class="meta-value" id="res-category">-</div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-label">Craft Type</div>
+                            <div class="meta-value" id="res-craft-type">-</div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-label">Material</div>
+                            <div class="meta-value" id="res-material">-</div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-label">Colour</div>
+                            <div class="meta-value" id="res-color">-</div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-label">Confidence</div>
+                            <div class="meta-value">
+                                <span class="confidence-badge" id="res-confidence">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Multilingual Catalogue Listings -->
+                <div class="card" style="margin-top: 24px;">
+                    <div class="card-header">
+                        <h2 class="card-title">📝 Generated Multilingual Catalogues</h2>
+                    </div>
+
+                    <!-- English Section -->
+                    <div class="catalog-lang-card">
+                        <div class="catalog-lang-header">
+                            <span class="lang-title">🇬🇧 English Catalogue</span>
+                        </div>
+                        <h3 class="catalog-prod-title" id="res-en-title">-</h3>
+                        <p class="catalog-desc" id="res-en-desc">-</p>
+                        <div class="tag-list" id="res-en-tags"></div>
+                    </div>
+
+                    <!-- Hindi Section -->
+                    <div class="catalog-lang-card">
+                        <div class="catalog-lang-header">
+                            <span class="lang-title">🇮🇳 Hindi Catalogue (हिंदी)</span>
+                        </div>
+                        <h3 class="catalog-prod-title" id="res-hi-title">-</h3>
+                        <p class="catalog-desc" id="res-hi-desc">-</p>
+                        <div class="tag-list" id="res-hi-tags"></div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const dropzone = document.getElementById('dropzone');
+        const imageInput = document.getElementById('image-input');
+        const previewContainer = document.getElementById('preview-container');
+        const imagePreview = document.getElementById('image-preview');
+        const generateBtn = document.getElementById('generate-btn');
+        const btnSpinner = document.getElementById('btn-spinner');
+        const btnText = document.getElementById('btn-text');
+        const alertError = document.getElementById('alert-error');
+
+        const placeholderState = document.getElementById('placeholder-state');
+        const resultsState = document.getElementById('results-state');
+
+        let selectedFile = null;
+
+        // Click dropzone to select file
+        dropzone.addEventListener('click', () => imageInput.click());
+
+        // Drag and drop handlers
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.classList.add('dragover');
+        });
+
+        dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('dragover');
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                handleFileSelect(e.dataTransfer.files[0]);
+            }
+        });
+
+        imageInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files[0]) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
+
+        function handleFileSelect(file) {
+            if (!file.type.startsWith('image/')) {
+                showError("Please select a valid image file (JPEG, PNG, WEBP).");
+                return;
+            }
+
+            hideError();
+            selectedFile = file;
+            imagePreview.src = URL.createObjectURL(file);
+            previewContainer.style.display = 'block';
+            generateBtn.disabled = false;
+        }
+
+        function showError(message) {
+            alertError.textContent = message;
+            alertError.style.display = 'block';
+        }
+
+        function hideError() {
+            alertError.style.display = 'none';
+            alertError.textContent = '';
+        }
+
+        generateBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+
+            hideError();
+            generateBtn.disabled = true;
+            btnSpinner.style.display = 'inline-block';
+            btnText.textContent = "Analyzing & Generating...";
+
+            const formData = new FormData();
+            formData.append('image', selectedFile);
+
+            try {
+                const response = await fetch('/ai/create-catalog', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({}));
+                    throw new Error(errData.detail || `Server returned error status ${response.status}`);
+                }
+
+                const data = await response.json();
+                renderResults(data);
+
+            } catch (err) {
+                showError(`Failed to generate catalog: ${err.message}`);
+            } finally {
+                generateBtn.disabled = false;
+                btnSpinner.style.display = 'none';
+                btnText.textContent = "Generate Smart Catalogue";
+            }
+        });
+
+        function renderResults(data) {
+            const prod = data.product;
+            const cat = data.catalog;
+
+            // Product attributes
+            document.getElementById('res-product-name').textContent = prod.product_name || '-';
+            document.getElementById('res-category').textContent = prod.category || '-';
+            document.getElementById('res-craft-type').textContent = prod.craft_type || 'Unspecified';
+            document.getElementById('res-material').textContent = prod.material || 'Unspecified';
+            document.getElementById('res-color').textContent = prod.color || 'Unspecified';
+            document.getElementById('res-confidence').textContent = `${Math.round((prod.confidence || 0) * 100)}%`;
+
+            // English Catalogue
+            document.getElementById('res-en-title').textContent = cat.english.title;
+            document.getElementById('res-en-desc').textContent = cat.english.description;
+            renderTags('res-en-tags', cat.english.tags);
+
+            // Hindi Catalogue
+            document.getElementById('res-hi-title').textContent = cat.hindi.title;
+            document.getElementById('res-hi-desc').textContent = cat.hindi.description;
+            renderTags('res-hi-tags', cat.hindi.tags);
+
+            // Toggle view
+            placeholderState.style.display = 'none';
+            resultsState.style.display = 'block';
+        }
+
+        function renderTags(elementId, tags) {
+            const container = document.getElementById(elementId);
+            container.innerHTML = '';
+            if (tags && tags.length > 0) {
+                tags.forEach(tag => {
+                    const span = document.createElement('span');
+                    span.className = 'tag-pill';
+                    span.textContent = `#${tag}`;
+                    container.appendChild(span);
+                });
+            }
+        }
+    </script>
+</body>
+</html>

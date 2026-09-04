@@ -1,15 +1,29 @@
-# Dependencies
+# Node.js/Backend Dependencies
 node_modules/
+
+# Python bytecode and cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
 
 # Environment variables (NEVER commit secrets!)
 .env
 .env.*
 !.env.example
+*.env.local
 
-# Temporary uploads & storage
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Data and uploaded files
 uploads/
 temp/
 tmp/
+data/images/*
+!data/images/.gitkeep
 
 # Logs
 *.log
@@ -20,3 +34,46 @@ yarn-error.log*
 # OS metadata
 .DS_Store
 Thumbs.db
+
+# Miscellaneous
+*.class
+*.swp
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IDE / Editor files
+*.iml
+*.ipr
+*.iws
+.idea/
+.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+**/.dart_tool/
+**/.flutter-plugins-dependencies
+**/.pub-cache/
+**/.pub/
+build/
+**/build/
+**/coverage/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio build artifacts
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Widget Preview related
+.widget_preview/
